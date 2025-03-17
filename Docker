@@ -1,0 +1,22 @@
+# Use an official OpenJDK base image
+FROM openjdk:11-jdk
+
+# Set environment variables
+ENV TOMCAT_VERSION=9.0.85
+ENV CATALINA_HOME=/usr/local/tomcat
+ENV PATH="$CATALINA_HOME/bin:$PATH"
+
+# Download and extract Tomcat
+RUN apt-get update && apt-get install -y wget && \
+    wget https://downloads.apache.org/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -P /tmp && \
+    mkdir -p ${CATALINA_HOME} && \
+    tar -xvzf /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz -C ${CATALINA_HOME} --strip-components=1 && \
+    rm /tmp/apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
+    chmod +x ${CATALINA_HOME}/bin/*.sh
+
+# Expose Tomcat's default port
+EXPOSE 8080
+
+# Start Tomcat
+CMD ["catalina.sh", "run"]
+
